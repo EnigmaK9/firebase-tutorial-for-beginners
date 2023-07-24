@@ -1,34 +1,45 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js"
-import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js"
+import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js"
 
 const appSettings = {
-    databaseURL: "https://realtime-database-74932-default-rtdb.firebaseio.com/"
+    databaseURL: "https://realtime-database-df319-default-rtdb.europe-west1.firebasedatabase.app/"
 }
 
 const app = initializeApp(appSettings)
 const database = getDatabase(app)
-const booksInDB = ref(database, "books")
+const shoppingListInDB = ref(database, "shoppingList")
 
-const booksEl = document.getElementById("books")
+const inputFieldEl = document.getElementById("input-field")
+const addButtonEl = document.getElementById("add-button")
+const shoppingListEl = document.getElementById("shopping-list")
 
-onValue(booksInDB, function(snapshot) {
-    let booksArray = Object.values(snapshot.val())
+addButtonEl.addEventListener("click", function() {
+    let inputValue = inputFieldEl.value
     
-    clearBooksListEl()
+    push(shoppingListInDB, inputValue)
     
-    // Challenge: Write a for loop where you console log each book.
-    for (let i = 0; i < booksArray.length; i++) {
-        let currentBook = booksArray[i]
-        
-        // Challenge: Use the appendBookToBooksListEl() function to append book instead of console logging
-        appendBookToBooksListEl(currentBook)
-    }
+    clearInputFieldEl()
+
+    appendItemToShoppingListEl(inputValue)
 })
 
-function clearBooksListEl() {
-    booksEl.innerHTML = ""
+/*
+Challenge:
+Call the onValue function with
+shoppingListInDB as the first argument and
+function(snapshot) {} as the second argument
+*/
+
+onValue(shoppingListInDB, function(snapshot) {
+    let itemsArray = Object.values(snapshot.val())
+    // Challenge: Use Object.values() to convert snapshot.val() from an Object to an Array. Create a variable for this.
+    console.log(itemsArray)
+})
+
+function clearInputFieldEl() {
+    inputFieldEl.value = ""
 }
 
-function appendBookToBooksListEl(bookValue) {
-    booksEl.innerHTML += `<li>${bookValue}</li>`
+function appendItemToShoppingListEl(itemValue) {
+    shoppingListEl.innerHTML += `<li>${itemValue}</li>`
 }
